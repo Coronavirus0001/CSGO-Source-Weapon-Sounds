@@ -8,7 +8,7 @@ local tab, container = "MISC", "Settings"
 -- New UI --
 local ui_e = {
 	enable = ui_new_checkbox(tab, container, "Custom Weapon Sounds"),
-	attack = ui_new_hotkey(tab, container, "Primary Attack", false, 1),
+	sound_sel = ui.new_combobox(tab, container, "Weapon Sound Version", {"CS:Source", "CS:GO 2018"}),
 	vol = ui_new_slider(tab, container, "Weapon Volume", 0, 100, 100, true, "%", 1)
 }
 --Functions
@@ -18,6 +18,10 @@ local function get_weapon()
 	if weapon_ent == nil then return end
 	local weapon = csgo_weapons(weapon_ent)
 	return weapon.name
+end
+
+local function reset_sound()
+	client_exec("snd_restart")
 end
 
 local function handle_ui()
@@ -33,9 +37,14 @@ client_set_event_callback("aim_fire", function()
 if not ui_get(ui_e.enable) then return end
 local cur_weapon = get_weapon():gsub("%s+", "")
 local cur_vol = (" " .. ui_get(ui_e.vol)/100)
-client_exec("playvol weaponsounds/"..cur_weapon..cur_vol)
+if ui_get(ui_e.sound_sel) == "CS:Source" then
+	client_exec("playvol weaponsounds_cs_source/"..cur_weapon..cur_vol)
+else
+	client_exec("playvol weaponsounds_csgo_2018/"..cur_weapon..cur_vol)
+end
 end)
 
 --Callbacks
 ui_set_callback(ui_e.enable, handle_ui)
+ui_set_callback(ui_e.sound_sel, reset_sound)
 handle_ui()
