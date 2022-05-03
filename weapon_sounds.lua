@@ -33,14 +33,16 @@ local function handle_ui()
 end
 
 --Functions On Events
-client_set_event_callback("aim_fire", function()
+client_set_event_callback("weapon_fire", function(e)
+if client.userid_to_entindex(e.userid) == entity.get_local_player() then
 if not ui_get(ui_e.enable) then return end
-local cur_weapon = get_weapon():gsub("%s+", "")
+local cur_weapon = get_weapon():gsub("%s+", "") or nil
 local cur_vol = (" " .. ui_get(ui_e.vol)/100)
 if ui_get(ui_e.sound_sel) == "CS:Source" then
 	client_exec("playvol weaponsounds_cs_source/"..cur_weapon..cur_vol)
 else
 	client_exec("playvol weaponsounds_csgo_2018/"..cur_weapon..cur_vol)
+end
 end
 end)
 
